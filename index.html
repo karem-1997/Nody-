@@ -10,134 +10,90 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;700&family=Dancing+Script:wght@700&display=swap');
 
-        :root {
-            --valentine-red: #ff4d6d;
-            --gold: #ffb703;
-            --glass: rgba(0, 0, 0, 0.6);
-        }
-
-        body {
-            margin: 0;
-            background: #0a0a0a;
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            font-family: 'Cairo', sans-serif;
-            color: #fff;
-            transition: 0.5s;
+        :root { --valentine-red: #ff4d6d; --gold: #ffb703; --glass: rgba(0, 0, 0, 0.7); }
+        
+        body { 
+            margin: 0; background: #0a0a0a; background-size: cover; background-position: center; 
+            background-attachment: fixed; font-family: 'Cairo', sans-serif; color: #fff; text-align: center;
         }
 
         /* شاشة الدخول */
-        #gate {
-            height: 100vh; background: #000;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            position: fixed; width: 100%; z-index: 9999;
+        #gate { 
+            height: 100vh; background: #000; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; position: fixed; width: 100%; z-index: 9999; 
             transition: 1.2s cubic-bezier(0.7, 0, 0.3, 1);
         }
+        .gate-title { font-family: 'Dancing Script', cursive; font-size: 5rem; color: var(--valentine-red); text-shadow: 0 0 20px var(--valentine-red); }
 
-        .gate-title { font-family: 'Dancing Script', cursive; font-size: 5.5rem; color: var(--valentine-red); text-shadow: 0 0 20px var(--valentine-red); margin-bottom: 30px; }
-
-        input[type="text"] {
-            padding: 15px; border: 2px solid var(--valentine-red); background: transparent;
-            color: white; border-radius: 30px; text-align: center; font-size: 1.2rem; outline: none; width: 220px;
-        }
-
-        /* المحتوى الرئيسي */
-        #content { display: none; opacity: 0; padding: 20px; transition: 1s; }
-
+        /* المحتوى */
+        #content { display: none; opacity: 0; padding: 20px; transition: 1s; min-height: 100vh; }
+        
+        /* الجملة الترحيبية - في نص الشاشة */
         .valentine-header {
-            font-family: 'Amiri', serif; font-size: clamp(2.5rem, 8vw, 4rem);
+            font-family: 'Amiri', serif; font-size: clamp(2rem, 7vw, 3.5rem);
             background: linear-gradient(45deg, #ff4d6d, #ffb703, #ff4d6d);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin: 50px 0; line-height: 1.3; font-weight: bold;
+            margin: 60px auto; line-height: 1.4; font-weight: bold; width: 90%; text-align: center;
         }
 
-        .main-card {
-            background: var(--glass); backdrop-filter: blur(10px);
-            max-width: 900px; margin: 20px auto; border-radius: 30px;
-            padding: 30px; border: 1px solid rgba(255,255,255,0.1);
-        }
+        .main-card { background: var(--glass); backdrop-filter: blur(10px); max-width: 900px; margin: 20px auto; border-radius: 30px; padding: 30px; border: 1px solid rgba(255,255,255,0.1); }
 
-        /* معرض الصور (2 في الصف) */
-        .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 900px; margin: 30px auto; }
-        .gallery img {
-            width: 100%; height: 250px; object-fit: cover;
-            border-radius: 20px; border: 4px solid rgba(255,255,255,0.1);
-            cursor: pointer; transition: 0.3s;
-        }
-        .gallery img:hover { transform: scale(1.03); border-color: var(--valentine-red); }
+        .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 900px; margin: 30px auto; }
+        .gallery img { width: 100%; height: 220px; object-fit: cover; border-radius: 15px; border: 3px solid rgba(255,255,255,0.1); cursor: pointer; }
 
-        /* Lightbox (ملء الشاشة) */
-        #lightbox {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 10000; justify-content: center; align-items: center;
-        }
-        #lightbox img { max-width: 95%; max-height: 90%; border-radius: 10px; box-shadow: 0 0 30px var(--valentine-red); }
-        .close-btn { position: absolute; top: 30px; right: 30px; font-size: 40px; cursor: pointer; color: white; }
+        #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; justify-content: center; align-items: center; }
+        #lightbox img { max-width: 95%; max-height: 90%; border-radius: 10px; }
 
-        /* الفيديوهات */
-        .v-item { max-width: 850px; margin: 25px auto; border-radius: 25px; overflow: hidden; border: 5px solid white; background: #000; }
-
-        /* لوحة التحكم */
-        #admin-panel {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #fff; color: #333; padding: 25px; border-radius: 25px;
-            z-index: 10001; width: 330px; box-shadow: 0 0 50px var(--valentine-red);
-            max-height: 85vh; overflow-y: auto;
-        }
-        .adm-input { width: 90%; padding: 12px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #ddd; }
-        .adm-btn { width: 100%; padding: 15px; background: var(--valentine-red); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .adm-btn { width: 100%; padding: 12px; background: var(--valentine-red); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 8px; }
+        #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; color: #333; padding: 20px; border-radius: 20px; z-index: 10001; width: 320px; max-height: 80vh; overflow-y: auto; }
     </style>
 </head>
 <body>
 
     <div id="gate">
         <div class="gate-title">Nada</div>
-        <input type="text" id="nadaPass" placeholder="تاريخنا (27/11)">
-        <button onclick="unlock()" class="adm-btn" style="width:150px; border-radius:30px;">دخول ❤️</button>
+        <input type="text" id="nadaPass" style="padding:12px; border-radius:20px; border:2px solid var(--valentine-red); background:none; color:white; text-align:center;" placeholder="تاريخنا (27/11)">
+        <button onclick="unlock()" class="adm-btn" style="width:120px; margin-top:20px;">دخول ❤️</button>
     </div>
 
-    <div id="lightbox" onclick="this.style.display='none'">
-        <span class="close-btn">&times;</span>
-        <img id="light-img" src="">
-    </div>
+    <div id="lightbox" onclick="this.style.display='none'"><img id="light-img"></div>
 
     <div id="content">
-        <div class="valentine-header">
-            كل فالنتاين وإنتي نبض قلبي.. <br>
-            يا "ندى" يا حكاية عُمري الأجمل ❤️
-        </div>
+        <div class="valentine-header" id="welcome-text">كل فالنتاين وإنتي نبض قلبي.. يا ندى ❤️</div>
 
         <div class="main-card">
-            <div id="timer" style="font-size: 1.5rem; font-weight: bold; margin-bottom: 20px; color: var(--gold);"></div>
+            <div id="timer" style="font-size: 1.6rem; font-weight: bold; color: var(--gold); margin-bottom: 15px;"></div>
             <div id="messages-list"></div>
         </div>
 
-        <h3 style="margin-top:50px; font-size: 2rem;">ذكرياتنا 📸</h3>
+        <h3 style="margin-top:40px;">ذكرياتنا 📸</h3>
         <div class="gallery" id="photo-gallery"></div>
 
-        <h3 style="margin-top:50px; font-size: 2rem;">فيديوهاتنا 🎥</h3>
+        <h3 style="margin-top:40px;">فيديوهاتنا 🎥</h3>
         <div id="video-list"></div>
 
-        <footer style="margin: 80px 0; font-family: 'Dancing Script'; font-size: 2.5rem; opacity: 0.7;">Always with you..</footer>
+        <footer style="padding: 60px 0; opacity: 0.6; font-family: 'Dancing Script'; font-size: 2rem;">Endless Love ❤️</footer>
     </div>
 
-    <div onclick="openAdmin()" style="position:fixed; bottom:20px; right:20px; opacity:0.05; cursor:pointer; font-size: 30px; z-index: 9998;">💖</div>
+    <div onclick="openAdmin()" style="position:fixed; bottom:15px; right:15px; opacity:0.05; cursor:pointer; font-size: 30px; z-index: 9998;">💖</div>
 
     <div id="admin-panel">
-        <h3 style="text-align: center; color: var(--valentine-red);">لوحة الملك 👑</h3>
+        <h3 style="color: var(--valentine-red); text-align:center;">لوحة الملك 👑</h3>
+        <label>تغيير الجملة الترحيبية:</label>
+        <textarea id="welcomeInp" style="width:90%; padding:8px; margin-bottom:10px; border-radius:8px;" placeholder="اكتب الجملة اللي تظهر في نص الشاشة"></textarea>
+        
         <label>إضافة صورة:</label>
-        <input type="file" id="fileInp" class="adm-input" accept="image/*">
+        <input type="file" id="fileInp" style="width:90%; margin-bottom:10px;" accept="image/*">
+        
         <label style="color: blue;">🖼️ تغيير خلفية الموقع:</label>
-        <input type="file" id="bgFileInp" class="adm-input" accept="image/*">
-        <label>رسالة حب:</label>
-        <textarea id="msgInp" class="adm-input" placeholder="اكتب هنا..."></textarea>
-        <label>يوتيوب:</label>
-        <input type="text" id="ytInp" class="adm-input" placeholder="رابط الفيديو">
+        <input type="file" id="bgFileInp" style="width:90%; margin-bottom:10px;" accept="image/*">
+        
+        <label>رسالة حب / فيديو يوتيوب:</label>
+        <textarea id="msgInp" style="width:90%; padding:8px;" placeholder="رسالة..."></textarea>
+        <input type="text" id="ytInp" style="width:90%; padding:8px; margin-top:5px;" placeholder="رابط يوتيوب">
         
         <button onclick="uploadAction()" id="upBtn" class="adm-btn">تحديث السحر ✨</button>
-        <hr>
-        <div id="admin-items" style="font-size: 12px;"></div>
+        <div id="admin-items" style="font-size: 11px; margin-top:10px; text-align:right;"></div>
         <button onclick="document.getElementById('admin-panel').style.display='none'" class="adm-btn" style="background:#666;">إغلاق</button>
     </div>
 
@@ -157,7 +113,7 @@
                 document.getElementById('content').style.display = "block";
                 setTimeout(() => document.getElementById('content').style.opacity = "1", 500);
                 startTimer(); loadData();
-            } else { alert("ركزي في تاريخنا!"); }
+            } else { alert("التاريخ غلط!"); }
         }
 
         function openAdmin() {
@@ -168,17 +124,17 @@
         }
 
         async function uploadAction() {
+            const btn = document.getElementById('upBtn'); btn.disabled = true;
+            const welcome = document.getElementById('welcomeInp').value;
             const file = document.getElementById('fileInp').files[0];
             const bgFile = document.getElementById('bgFileInp').files[0];
             const msg = document.getElementById('msgInp').value;
             const yt = document.getElementById('ytInp').value;
-            const btn = document.getElementById('upBtn');
 
-            btn.disabled = true; btn.innerText = "جاري السحر... ✨";
-
+            if(welcome) await db.ref('settings/welcomeText').set(welcome);
             if(yt) await db.ref('videos').push({url: yt});
             if(msg) await db.ref('messages').push({text: msg});
-
+            
             if(bgFile) {
                 const r = new FileReader(); r.readAsDataURL(bgFile);
                 r.onload = async () => await db.ref('settings/bg').set(r.result);
@@ -187,18 +143,19 @@
             if(file) {
                 const r = new FileReader(); r.readAsDataURL(file);
                 r.onload = async () => {
-                    await db.ref('photos').push({url: r.result, name: file.name});
+                    await db.ref('photos').push({url: r.result});
                     location.reload();
                 };
             } else { setTimeout(() => location.reload(), 1500); }
         }
 
         function loadData() {
+            db.ref('settings/welcomeText').on('value', s => { if(s.val()) document.getElementById('welcome-text').innerText = s.val(); });
             db.ref('settings/bg').on('value', s => { if(s.val()) document.body.style.backgroundImage = `url(${s.val()})`; });
             db.ref('messages').on('value', s => {
                 const l = document.getElementById('messages-list'); l.innerHTML = "";
                 if(s.val()) Object.values(s.val()).reverse().forEach(m => {
-                    l.innerHTML += `<div style="background:rgba(255,255,255,0.1); padding:15px; border-radius:15px; margin:10px 0; border-right:4px solid var(--valentine-red); text-align:right;">${m.text}</div>`;
+                    l.innerHTML += `<div style="background:rgba(255,255,255,0.1); padding:12px; border-radius:15px; margin:8px 0; border-right:4px solid var(--valentine-red); text-align:right;">${m.text}</div>`;
                 });
             });
             db.ref('photos').on('value', s => {
@@ -211,7 +168,7 @@
                 const v = document.getElementById('video-list'); v.innerHTML = "";
                 if(s.val()) Object.values(s.val()).reverse().forEach(vid => {
                     let id = vid.url.split('v=')[1] || vid.url.split('/').pop();
-                    v.innerHTML += `<div class="v-item"><iframe width="100%" height="350" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe></div>`;
+                    v.innerHTML += `<div style="margin:20px auto; border-radius:20px; overflow:hidden; border:4px solid white;"><iframe width="100%" height="300" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe></div>`;
                 });
             });
         }
@@ -234,7 +191,9 @@
         function startTimer() {
             const start = new Date("November 27, 2022 00:00:00").getTime();
             setInterval(() => {
-                const d = Math.floor((new Date().getTime() - start) / (1000 * 60 * 60 * 24));
+                const now = new Date().getTime();
+                const diff = now - start;
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
                 document.getElementById('timer').innerText = `بقالنا ${d} يوم سوا ❤️`;
             }, 1000);
         }
