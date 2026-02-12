@@ -19,24 +19,28 @@
         #gate-overlay { background: rgba(0,0,0,0.7); padding: 40px; border-radius: 30px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); }
         
         #content { display: none; opacity: 0; padding: 20px; transition: 1s; }
-        .valentine-header { font-family: 'Amiri', serif; font-size: clamp(2rem, 8vw, 3.5rem); color: #fff; text-shadow: 0 0 15px var(--valentine-red); margin: 80px auto 40px; }
+        .valentine-header { font-family: 'Amiri', serif; font-size: clamp(1.8rem, 7vw, 3rem); color: #fff; text-shadow: 0 0 15px var(--valentine-red); margin: 70px auto 30px; line-height: 1.4; }
 
-        .main-card { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px); max-width: 850px; margin: 20px auto; border-radius: 25px; padding: 25px; border: 1px solid rgba(255,255,255,0.2); }
+        .main-card { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(12px); max-width: 850px; margin: 20px auto; border-radius: 25px; padding: 25px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         
+        /* تصميم العداد الجديد */
+        .live-counter { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 20px; direction: ltr; }
+        .counter-unit { background: rgba(255, 77, 109, 0.2); padding: 10px; border-radius: 12px; min-width: 60px; border: 1px solid rgba(255,255,255,0.1); }
+        .unit-num { display: block; font-size: 1.5rem; font-weight: bold; color: var(--gold); text-shadow: 0 0 5px #000; }
+        .unit-label { font-size: 0.7rem; color: #eee; }
+
         .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 900px; margin: 20px auto; }
         .gallery img { width: 100%; height: 200px; object-fit: cover; border-radius: 15px; border: 2px solid #fff; cursor: pointer; }
 
         #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; }
-        #lightbox img { max-width: 90%; max-height: 80%; border-radius: 10px; box-shadow: 0 0 30px var(--valentine-red); }
+        #lightbox img { max-width: 90%; max-height: 80%; border-radius: 10px; }
 
         .adm-btn { width: 100%; padding: 12px; background: var(--valentine-red); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         
-        /* لوحة التحكم الجديدة */
         #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; color: #333; padding: 25px; border-radius: 20px; z-index: 10001; width: 360px; text-align: right; box-shadow: 0 0 50px #000; max-height: 90vh; overflow-y: auto; }
-        .manage-item { display: flex; align-items: center; justify-content: space-between; background: #f4f4f4; padding: 8px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #ddd; }
-        .manage-item img { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; }
-        .manage-item span { font-size: 12px; flex: 1; margin: 0 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .x-del { background: #ff4d6d; color: white; border: none; width: 25px; height: 25px; border-radius: 50%; cursor: pointer; font-weight: bold; }
+        .manage-item { display: flex; align-items: center; justify-content: space-between; background: #f4f4f4; padding: 8px; border-radius: 10px; margin-bottom: 8px; }
+        .manage-item img { width: 45px; height: 45px; object-fit: cover; border-radius: 5px; }
+        .x-del { background: #ff4d6d; color: white; border: none; width: 25px; height: 25px; border-radius: 50%; cursor: pointer; }
         input, textarea { width: 90%; padding: 10px; margin: 5px 0; border-radius: 10px; border: 1px solid #ccc; font-family: 'Cairo'; }
     </style>
 </head>
@@ -50,16 +54,20 @@
         <div id="gate-overlay">
             <h1 style="font-family:'Dancing Script'; color:var(--valentine-red); font-size:4rem; margin:0 0 20px;">Nada</h1>
             <input type="text" id="nadaPass" placeholder="التاريخ السري (27/11)" style="text-align: center;">
-            <button onclick="unlock()" class="adm-btn">دخول ❤️</button>
+            <button onclick="unlock()" class="adm-btn">دخول لقبري ❤️</button>
         </div>
     </div>
 
     <div id="content">
         <div class="valentine-header" id="welcome-text">كل فالنتاين وإنتي نبض قلبي.. يا ندى ❤️</div>
+        
         <div class="main-card">
-            <div id="timer" style="font-size: 1.8rem; font-weight: bold; color: var(--gold); margin-bottom: 15px;"></div>
+            <h4 style="margin-top:0; color:var(--valentine-red);">حكايتنا بدأت منذ:</h4>
+            <div id="live-timer" class="live-counter">
+                </div>
             <div id="messages-list"></div>
         </div>
+
         <h3 style="margin-top:40px;">ذكرياتنا 📸</h3>
         <div class="gallery" id="photo-gallery"></div>
         <div id="video-list"></div>
@@ -69,25 +77,17 @@
 
     <div id="admin-panel">
         <h3 style="text-align:center; margin-top:0;">لوحة التحكم ✨</h3>
-        
         <label>رسالة الترحيب:</label>
-        <textarea id="welcomeInp" placeholder="تغيير الكلام اللي فوق..."></textarea>
-        
+        <textarea id="welcomeInp"></textarea>
         <label>إضافة صورة:</label>
         <input type="file" id="fileInp" accept="image/*">
-        
         <label>رسالة حب:</label>
-        <textarea id="msgInp" placeholder="اكتب رسالة لندى..."></textarea>
-        
+        <textarea id="msgInp"></textarea>
         <label>رابط يوتيوب:</label>
-        <input type="text" id="ytInp" placeholder="ضع الرابط هنا...">
-        
-        <button onclick="uploadAction()" id="upBtn" class="adm-btn">حفظ التغييرات 💾</button>
-        
+        <input type="text" id="ytInp">
+        <button onclick="uploadAction()" id="upBtn" class="adm-btn">حفظ 💾</button>
         <hr>
-        <h4 style="margin: 10px 0;">إدارة المحتوى (اضغط X للحذف):</h4>
         <div id="manage-list"></div>
-        
         <button onclick="document.getElementById('admin-panel').style.display='none'" class="adm-btn" style="background:#666;">إغلاق</button>
     </div>
 
@@ -101,6 +101,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // تحميل الخلفية
         db.ref('settings/bg').on('value', s => {
             if(s.val()) {
                 document.getElementById('mainBody').style.backgroundImage = `url(${s.val()})`;
@@ -113,19 +114,19 @@
                 document.getElementById('gate').style.display = "none";
                 document.getElementById('content').style.display = "block";
                 document.getElementById('content').style.opacity = "1";
-                startTimer(); loadData();
-            } else { alert("التاريخ غلط يا بطل!"); }
+                startLiveCounter(); loadData();
+            } else { alert("التاريخ غلط!"); }
         }
 
         function openAdmin() {
-            if(prompt("كلمة سر الماستر:") === "1997") {
+            if(prompt("كلمة السر:") === "1997") {
                 document.getElementById('admin-panel').style.display = "block";
                 loadManagement();
             }
         }
 
         async function uploadAction() {
-            const btn = document.getElementById('upBtn'); btn.disabled = true; btn.innerText = "جاري الحفظ...";
+            const btn = document.getElementById('upBtn'); btn.disabled = true;
             const welcome = document.getElementById('welcomeInp').value;
             const file = document.getElementById('fileInp').files[0];
             const msg = document.getElementById('msgInp').value;
@@ -137,20 +138,15 @@
 
             if(file) {
                 const r = new FileReader(); r.readAsDataURL(file);
-                r.onload = async () => {
-                    await db.ref('photos').push({url: r.result});
-                    resetAdmin();
-                };
+                r.onload = async () => { await db.ref('photos').push({url: r.result}); resetAdmin(); };
             } else { resetAdmin(); }
         }
 
         function resetAdmin() {
-            const btn = document.getElementById('upBtn');
-            btn.disabled = false; btn.innerText = "حفظ التغييرات 💾";
+            document.getElementById('upBtn').disabled = false;
             document.getElementById('fileInp').value = "";
             document.getElementById('msgInp').value = "";
             document.getElementById('ytInp').value = "";
-            document.getElementById('welcomeInp').value = "";
             loadManagement();
         }
 
@@ -159,7 +155,7 @@
             db.ref('messages').on('value', s => {
                 const l = document.getElementById('messages-list'); l.innerHTML = "";
                 if(s.val()) Object.values(s.val()).reverse().forEach(m => {
-                    l.innerHTML += `<div style="background:rgba(255,255,255,0.2); padding:10px; border-radius:15px; margin:5px 0;">${m.text}</div>`;
+                    l.innerHTML += `<div style="background:rgba(255,255,255,0.15); padding:10px; border-radius:15px; margin:5px 0; border-right:4px solid var(--valentine-red); text-align:right;">${m.text}</div>`;
                 });
             });
             db.ref('photos').on('value', s => {
@@ -180,28 +176,56 @@
         function openImg(url) { document.getElementById('light-img').src = url; document.getElementById('lightbox').style.display = "flex"; }
 
         function loadManagement() {
-            const container = document.getElementById('manage-list'); container.innerHTML = "";
-            const types = ['photos', 'messages', 'videos'];
-            types.forEach(type => {
+            const container = document.getElementById('manage-list'); container.innerHTML = "<h4>إدارة العناصر:</h4>";
+            ['photos', 'messages', 'videos'].forEach(type => {
                 db.ref(type).once('value', s => {
                     if(s.val()) Object.entries(s.val()).forEach(([key, val]) => {
                         const item = document.createElement('div');
                         item.className = 'manage-item';
-                        let preview = type === 'photos' ? `<img src="${val.url}">` : `<span>${val.text || val.url}</span>`;
-                        item.innerHTML = `${preview} <button class="x-del" onclick="deleteItem('${type}','${key}')">X</button>`;
+                        let pre = type === 'photos' ? `<img src="${val.url}">` : `<span>${(val.text || 'فيديو').substring(0,20)}...</span>`;
+                        item.innerHTML = `${pre} <button class="x-del" onclick="deleteItem('${type}','${key}')">X</button>`;
                         container.appendChild(item);
                     });
                 });
             });
         }
 
-        async function deleteItem(t, k) { if(confirm("أكيد عايز تمسح دي؟")) { await db.ref(`${t}/${k}`).remove(); loadManagement(); } }
+        async function deleteItem(t, k) { if(confirm("حذف؟")) { await db.ref(`${t}/${k}`).remove(); loadManagement(); } }
 
-        function startTimer() {
-            const start = new Date("November 27, 2022 00:00:00").getTime();
+        // --- وظيفة العداد الحي الاحترافي ---
+        function startLiveCounter() {
+            const startDate = new Date("November 27, 2022 00:00:00");
+            
             setInterval(() => {
-                const d = Math.floor((new Date().getTime() - start) / (1000 * 60 * 60 * 24));
-                document.getElementById('timer').innerText = `بقالنا ${d} يوم بنرسم حكايتنا ❤️`;
+                const now = new Date();
+                let diff = now - startDate;
+
+                let years = now.getFullYear() - startDate.getFullYear();
+                let months = now.getMonth() - startDate.getMonth();
+                let days = now.getDate() - startDate.getDate();
+
+                if (days < 0) {
+                    months--;
+                    let lastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+                    days += lastMonth.getDate();
+                }
+                if (months < 0) {
+                    years--;
+                    months += 12;
+                }
+
+                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((diff / (1000 * 60)) % 60);
+                const seconds = Math.floor((diff / 1000) % 60);
+
+                document.getElementById('live-timer').innerHTML = `
+                    <div class="counter-unit"><span class="unit-num">${years}</span><span class="unit-label">سنة</span></div>
+                    <div class="counter-unit"><span class="unit-num">${months}</span><span class="unit-label">شهر</span></div>
+                    <div class="counter-unit"><span class="unit-num">${days}</span><span class="unit-label">يوم</span></div>
+                    <div class="counter-unit"><span class="unit-num">${hours}</span><span class="unit-label">ساعة</span></div>
+                    <div class="counter-unit"><span class="unit-num">${minutes}</span><span class="unit-label">دقيقة</span></div>
+                    <div class="counter-unit"><span class="unit-num">${seconds}</span><span class="unit-label">ثانية</span></div>
+                `;
             }, 1000);
         }
     </script>
