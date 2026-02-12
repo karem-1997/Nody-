@@ -23,7 +23,7 @@
 
         .main-card { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(12px); max-width: 800px; margin: 15px auto; border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); }
         
-        /* العداد المصغر الجديد */
+        /* العداد المصغر */
         .live-counter { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 15px; direction: ltr; }
         .counter-unit { background: rgba(255, 77, 109, 0.15); padding: 5px; border-radius: 8px; min-width: 45px; border: 1px solid rgba(255,255,255,0.05); }
         .unit-num { display: block; font-size: 1.1rem; font-weight: bold; color: var(--gold); }
@@ -184,7 +184,8 @@
         async function deleteItem(t, k) { if(confirm("حذف؟")) { await db.ref(`${t}/${k}`).remove(); loadManagement(); } }
 
         function startLiveCounter() {
-            const startDate = new Date("November 27, 2022 00:00:00");
+            // التعديل: البداية من 1 مايو 2024
+            const startDate = new Date("May 01, 2024 00:00:00");
             setInterval(() => {
                 const now = new Date();
                 let diff = now - startDate;
