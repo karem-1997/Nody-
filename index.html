@@ -56,7 +56,16 @@
         .gallery img { width: 100%; height: 220px; object-fit: cover; border-radius: 20px; border: 3px solid #fff; }
 
         .adm-btn { width: 100%; padding: 12px; background: var(--valentine-red); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; color: #333; padding: 25px; border-radius: 20px; z-index: 10001; width: 320px; text-align: right; box-shadow: 0 0 50px #000; overflow-y: auto; max-height: 80vh; }
+        
+        /* لوحة التحكم الجديدة مع ميزة الحذف */
+        #admin-panel { 
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            background: #fff; color: #333; padding: 25px; border-radius: 20px; 
+            z-index: 10001; width: 340px; text-align: right; box-shadow: 0 0 50px #000; 
+            overflow-y: auto; max-height: 85vh; 
+        }
+        .del-item { background: #ff4444; color: white; border: none; padding: 4px 8px; border-radius: 5px; cursor: pointer; font-size: 10px; margin-right: 5px; }
+        .admin-section { border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
         input, textarea { width: 90%; padding: 10px; margin: 8px 0; border-radius: 10px; border: 1px solid #ccc; font-family: 'Cairo'; }
     </style>
 </head>
@@ -90,19 +99,30 @@
     <div onclick="openAdmin()" style="position:fixed; bottom:20px; right:20px; opacity:0.1; cursor:pointer; font-size: 35px; z-index: 9998;">💖</div>
 
     <div id="admin-panel">
-        <h3 style="text-align:center;">لوحة التحكم 👑</h3>
-        <label>الجملة الترحيبية:</label>
-        <textarea id="welcomeInp"></textarea>
-        <label>إضافة صورة للذكريات:</label>
-        <input type="file" id="fileInp" accept="image/*">
-        <label>تغيير الخلفية:</label>
-        <input type="file" id="bgFileInp" accept="image/*">
-        <label>رابط فيديو يوتيوب:</label>
-        <input type="text" id="ytInp">
-        <label>رسالة جديدة:</label>
-        <textarea id="msgInp"></textarea>
-        <button onclick="uploadAction()" id="upBtn" class="adm-btn">تحديث الموقع ✨</button>
-        <button onclick="document.getElementById('admin-panel').style.display='none'" class="adm-btn" style="background:#666;">إغلاق</button>
+        <h3 style="text-align:center; color: var(--valentine-red);">لوحة التحكم 👑</h3>
+        
+        <div class="admin-section">
+            <label>الجملة الترحيبية:</label>
+            <textarea id="welcomeInp"></textarea>
+            <label>تغيير الخلفية:</label>
+            <input type="file" id="bgFileInp" accept="image/*">
+            <label>إضافة صورة:</label>
+            <input type="file" id="fileInp" accept="image/*">
+            <label>يوتيوب:</label>
+            <input type="text" id="ytInp">
+            <label>رسالة:</label>
+            <textarea id="msgInp"></textarea>
+            <button onclick="uploadAction()" id="upBtn" class="adm-btn">تحديث ✨</button>
+        </div>
+
+        <div id="delete-management">
+            <p style="font-weight: bold; color: #666; font-size: 14px;">إدارة المحتوى (للحذف):</p>
+            <div id="items-to-delete" style="font-size: 12px; max-height: 200px; overflow-y: auto; background: #f9f9f9; padding: 10px; border-radius: 10px;">
+                تحميل القائمة...
+            </div>
+        </div>
+
+        <button onclick="document.getElementById('admin-panel').style.display='none'" class="adm-btn" style="background:#666; margin-top: 15px;">إغلاق</button>
     </div>
 
     <script>
@@ -115,7 +135,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // تحميل الخلفية فوراً
+        // تحميل الخلفية
         db.ref('settings/bg').on('value', s => {
             if(s.val()) {
                 document.getElementById('mainBody').style.backgroundImage = `url(${s.val()})`;
@@ -135,10 +155,15 @@
             } else { alert("غلط!"); }
         }
 
-        function openAdmin() { if(prompt("الباسورد:") === "1997") document.getElementById('admin-panel').style.display = "block"; }
+        function openAdmin() { 
+            if(prompt("الباسورد:") === "1997") {
+                document.getElementById('admin-panel').style.display = "block";
+                loadAdminDeleteList();
+            } 
+        }
 
         async function uploadAction() {
-            const btn = document.getElementById('upBtn'); btn.disabled = true; btn.innerText = "جاري الحفظ...";
+            const btn = document.getElementById('upBtn'); btn.disabled = true;
             const welcome = document.getElementById('welcomeInp').value;
             const file = document.getElementById('fileInp').files[0];
             const bgFile = document.getElementById('bgFileInp').files[0];
@@ -153,34 +178,24 @@
                 const r = new FileReader(); r.readAsDataURL(bgFile);
                 r.onload = async () => await db.ref('settings/bg').set(r.result);
             }
-
             if(file) {
                 const r = new FileReader(); r.readAsDataURL(file);
-                r.onload = async () => {
-                    await db.ref('photos').push({url: r.result});
-                    location.reload();
-                };
-            } else { setTimeout(() => location.reload(), 2000); }
+                r.onload = async () => { await db.ref('photos').push({url: r.result}); location.reload(); };
+            } else { setTimeout(() => location.reload(), 1500); }
         }
 
         function loadData() {
             db.ref('settings/welcomeText').on('value', s => { if(s.val()) document.getElementById('welcome-text').innerText = s.val(); });
-            
-            // تحميل الرسائل
             db.ref('messages').on('value', s => {
                 const l = document.getElementById('messages-list'); l.innerHTML = "";
                 if(s.val()) Object.values(s.val()).reverse().forEach(m => {
                     l.innerHTML += `<div style="background:rgba(255,255,255,0.2); padding:12px; border-radius:15px; margin:8px 0; border-right:5px solid var(--valentine-red); text-align:right;">${m.text}</div>`;
                 });
             });
-
-            // تحميل الصور (كلها)
             db.ref('photos').on('value', s => {
                 const g = document.getElementById('photo-gallery'); g.innerHTML = "";
                 if(s.val()) Object.values(s.val()).forEach(p => { g.innerHTML += `<img src="${p.url}">`; });
             });
-
-            // تحميل الفيديوهات
             db.ref('videos').on('value', s => {
                 const v = document.getElementById('video-list'); v.innerHTML = "";
                 if(s.val()) Object.values(s.val()).reverse().forEach(vid => {
@@ -188,6 +203,33 @@
                     v.innerHTML += `<div style="margin:20px auto; border-radius:20px; overflow:hidden; border:3px solid white;"><iframe width="100%" height="300" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe></div>`;
                 });
             });
+        }
+
+        // --- ميزة الحذف الجديدة ---
+        function loadAdminDeleteList() {
+            const container = document.getElementById('items-to-delete');
+            container.innerHTML = "";
+            ['photos', 'messages', 'videos'].forEach(type => {
+                db.ref(type).once('value', s => {
+                    if(s.val()) {
+                        Object.keys(s.val()).forEach(key => {
+                            const div = document.createElement('div');
+                            div.style.marginBottom = "8px";
+                            div.innerHTML = `<span>${type == 'photos' ? 'صورة' : type == 'messages' ? 'رسالة' : 'فيديو'}</span> 
+                                             <button class="del-item" onclick="deleteItem('${type}', '${key}')">حذف 🗑️</button>`;
+                            container.appendChild(div);
+                        });
+                    }
+                });
+            });
+        }
+
+        async function deleteItem(type, key) {
+            if(confirm("هل تريد حذف هذا العنصر نهائياً؟")) {
+                await db.ref(`${type}/${key}`).remove();
+                loadAdminDeleteList();
+                loadData(); // تحديث الموقع فوراً
+            }
         }
 
         function startTimer() {
