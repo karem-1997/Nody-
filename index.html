@@ -16,34 +16,32 @@
         body { 
             margin: 0; background-color: #000; background-size: cover; background-position: center; 
             background-attachment: fixed; font-family: 'Cairo', sans-serif; color: #fff; text-align: center;
-            overflow-x: hidden; transition: 0.5s;
+            overflow-x: hidden;
         }
 
         body::before {
             content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.25); 
-            backdrop-filter: blur(2px); z-index: -1;
+            background: rgba(0, 0, 0, 0.25); backdrop-filter: blur(2px); z-index: -1;
         }
 
+        /* شاشة الدخول */
         #gate { 
             height: 100vh; display: flex; flex-direction: column; 
             justify-content: center; align-items: center; position: fixed; width: 100%; z-index: 9999; 
-            transition: 1s ease-in-out; background-size: cover; background-position: center;
+            background-size: cover; background-position: center; transition: 1s;
         }
         
         #gate-overlay {
-            background: rgba(255, 77, 109, 0.1); padding: 40px; border-radius: 30px; 
-            backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(0,0,0,0.7); padding: 40px; border-radius: 30px; 
+            backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2);
         }
 
-        .gate-title { font-family: 'Dancing Script', cursive; font-size: 5rem; color: #fff; text-shadow: 0 0 20px var(--valentine-red); margin-bottom: 20px; }
-
-        #content { display: none; opacity: 0; padding: 20px; transition: 1s; position: relative; }
+        #content { display: none; opacity: 0; padding: 20px; transition: 1s; }
         
         .valentine-header {
-            font-family: 'Amiri', serif; font-size: clamp(2.2rem, 8vw, 3.5rem);
-            color: #ffffff; text-shadow: 0 0 15px var(--valentine-red);
-            margin: 80px auto 40px; line-height: 1.5; font-weight: bold; width: 95%; 
+            font-family: 'Amiri', serif; font-size: clamp(2rem, 8vw, 3.5rem);
+            color: #fff; text-shadow: 0 0 15px var(--valentine-red);
+            margin: 80px auto 40px; line-height: 1.5;
         }
 
         .main-card { 
@@ -52,29 +50,46 @@
             padding: 25px; border: 1px solid rgba(255,255,255,0.2);
         }
 
+        /* تنسيق الجاليري */
         .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 900px; margin: 20px auto; }
-        .gallery img { width: 100%; height: 220px; object-fit: cover; border-radius: 20px; border: 3px solid #fff; }
+        .gallery img { 
+            width: 100%; height: 200px; object-fit: cover; border-radius: 15px; 
+            border: 2px solid #fff; cursor: pointer; transition: 0.3s;
+        }
+        .gallery img:hover { transform: scale(1.02); }
+
+        /* نافذة عرض الصور الكبيرة */
+        #lightbox {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center;
+        }
+        #lightbox img { max-width: 90%; max-height: 80%; border-radius: 10px; box-shadow: 0 0 30px var(--valentine-red); }
+        #close-light { position: absolute; top: 20px; right: 30px; font-size: 40px; color: #fff; cursor: pointer; }
 
         .adm-btn { width: 100%; padding: 12px; background: var(--valentine-red); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         
-        /* لوحة التحكم الجديدة مع ميزة الحذف */
+        /* لوحة التحكم */
         #admin-panel { 
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
             background: #fff; color: #333; padding: 25px; border-radius: 20px; 
             z-index: 10001; width: 340px; text-align: right; box-shadow: 0 0 50px #000; 
-            overflow-y: auto; max-height: 85vh; 
+            max-height: 85vh; overflow-y: auto;
         }
-        .del-item { background: #ff4444; color: white; border: none; padding: 4px 8px; border-radius: 5px; cursor: pointer; font-size: 10px; margin-right: 5px; }
-        .admin-section { border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
+        .del-item { background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin: 5px; }
         input, textarea { width: 90%; padding: 10px; margin: 8px 0; border-radius: 10px; border: 1px solid #ccc; font-family: 'Cairo'; }
     </style>
 </head>
 <body id="mainBody">
 
+    <div id="lightbox" onclick="this.style.display='none'">
+        <span id="close-light">&times;</span>
+        <img id="light-img" src="">
+    </div>
+
     <div id="gate">
         <div id="gate-overlay">
-            <div class="gate-title">Nada</div>
-            <input type="text" id="nadaPass" placeholder="تاريخنا السري (27/11)" style="text-align: center;">
+            <h1 style="font-family:'Dancing Script'; color:var(--valentine-red); font-size:4rem; margin:0 0 20px;">Nada</h1>
+            <input type="text" id="nadaPass" placeholder="التاريخ السري (27/11)" style="text-align: center;">
             <button onclick="unlock()" class="adm-btn">دخول ❤️</button>
         </div>
     </div>
@@ -83,46 +98,30 @@
         <div class="valentine-header" id="welcome-text">كل فالنتاين وإنتي نبض قلبي.. يا ندى ❤️</div>
         
         <div class="main-card">
-            <div id="timer" style="font-size: 1.8rem; font-weight: bold; color: #fff; text-shadow: 0 0 10px var(--gold); margin-bottom: 15px;"></div>
+            <div id="timer" style="font-size: 1.8rem; font-weight: bold; color: var(--gold); margin-bottom: 15px;"></div>
             <div id="messages-list"></div>
         </div>
 
-        <h3 style="margin-top:50px; font-size: 2rem; text-shadow: 0 0 10px var(--valentine-red);">ذكرياتنا 📸</h3>
+        <h3 style="margin-top:40px;">ذكرياتنا 📸</h3>
         <div class="gallery" id="photo-gallery"></div>
         
-        <h3 style="margin-top:50px; font-size: 2rem; text-shadow: 0 0 10px var(--valentine-red);">فيديوهاتنا 🎥</h3>
         <div id="video-list"></div>
-        
-        <footer style="padding: 60px 0; font-family: 'Dancing Script'; font-size: 2.5rem; text-shadow: 0 0 10px var(--valentine-red);">Forever ❤️</footer>
     </div>
 
     <div onclick="openAdmin()" style="position:fixed; bottom:20px; right:20px; opacity:0.1; cursor:pointer; font-size: 35px; z-index: 9998;">💖</div>
 
     <div id="admin-panel">
-        <h3 style="text-align:center; color: var(--valentine-red);">لوحة التحكم 👑</h3>
-        
-        <div class="admin-section">
-            <label>الجملة الترحيبية:</label>
-            <textarea id="welcomeInp"></textarea>
-            <label>تغيير الخلفية:</label>
-            <input type="file" id="bgFileInp" accept="image/*">
-            <label>إضافة صورة:</label>
-            <input type="file" id="fileInp" accept="image/*">
-            <label>يوتيوب:</label>
-            <input type="text" id="ytInp">
-            <label>رسالة:</label>
-            <textarea id="msgInp"></textarea>
-            <button onclick="uploadAction()" id="upBtn" class="adm-btn">تحديث ✨</button>
-        </div>
-
-        <div id="delete-management">
-            <p style="font-weight: bold; color: #666; font-size: 14px;">إدارة المحتوى (للحذف):</p>
-            <div id="items-to-delete" style="font-size: 12px; max-height: 200px; overflow-y: auto; background: #f9f9f9; padding: 10px; border-radius: 10px;">
-                تحميل القائمة...
-            </div>
-        </div>
-
-        <button onclick="document.getElementById('admin-panel').style.display='none'" class="adm-btn" style="background:#666; margin-top: 15px;">إغلاق</button>
+        <h3 style="text-align:center;">لوحة التحكم ✨</h3>
+        <label>إضافة صورة:</label>
+        <input type="file" id="fileInp" accept="image/*">
+        <label>رسالة:</label>
+        <textarea id="msgInp"></textarea>
+        <label>رابط يوتيوب:</label>
+        <input type="text" id="ytInp">
+        <button onclick="uploadAction()" id="upBtn" class="adm-btn">حفظ (بدون خروج) 💾</button>
+        <hr>
+        <div id="items-to-delete"></div>
+        <button onclick="document.getElementById('admin-panel').style.display='none'" class="adm-btn" style="background:#666;">إغلاق</button>
     </div>
 
     <script>
@@ -145,91 +144,84 @@
 
         function unlock() {
             if(document.getElementById('nadaPass').value === "27/11") {
-                document.getElementById('gate').style.opacity = "0";
-                setTimeout(() => {
-                    document.getElementById('gate').style.display = "none";
-                    document.getElementById('content').style.display = "block";
-                    document.getElementById('content').style.opacity = "1";
-                }, 800);
+                document.getElementById('gate').style.display = "none";
+                document.getElementById('content').style.display = "block";
+                document.getElementById('content').style.opacity = "1";
                 startTimer(); loadData();
             } else { alert("غلط!"); }
         }
 
-        function openAdmin() { 
-            if(prompt("الباسورد:") === "1997") {
-                document.getElementById('admin-panel').style.display = "block";
-                loadAdminDeleteList();
-            } 
-        }
+        function openAdmin() { if(prompt("الباسورد:") === "1997") { document.getElementById('admin-panel').style.display = "block"; loadAdminDeleteList(); } }
 
+        // التعديل: الحفظ بدون عمل Refresh للموقع
         async function uploadAction() {
-            const btn = document.getElementById('upBtn'); btn.disabled = true;
-            const welcome = document.getElementById('welcomeInp').value;
+            const btn = document.getElementById('upBtn'); btn.disabled = true; btn.innerText = "جاري الحفظ...";
             const file = document.getElementById('fileInp').files[0];
-            const bgFile = document.getElementById('bgFileInp').files[0];
-            const yt = document.getElementById('ytInp').value;
             const msg = document.getElementById('msgInp').value;
+            const yt = document.getElementById('ytInp').value;
 
-            if(welcome) await db.ref('settings/welcomeText').set(welcome);
-            if(yt) await db.ref('videos').push({url: yt});
             if(msg) await db.ref('messages').push({text: msg});
-            
-            if(bgFile) {
-                const r = new FileReader(); r.readAsDataURL(bgFile);
-                r.onload = async () => await db.ref('settings/bg').set(r.result);
-            }
+            if(yt) await db.ref('videos').push({url: yt});
             if(file) {
                 const r = new FileReader(); r.readAsDataURL(file);
-                r.onload = async () => { await db.ref('photos').push({url: r.result}); location.reload(); };
-            } else { setTimeout(() => location.reload(), 1500); }
+                r.onload = async () => {
+                    await db.ref('photos').push({url: r.result});
+                    finishUpload();
+                };
+            } else { finishUpload(); }
+        }
+
+        function finishUpload() {
+            const btn = document.getElementById('upBtn');
+            btn.disabled = false; btn.innerText = "تم الحفظ بنجاح ✅";
+            document.getElementById('fileInp').value = "";
+            document.getElementById('msgInp').value = "";
+            document.getElementById('ytInp').value = "";
+            loadAdminDeleteList(); // تحديث قائمة الحذف فوراً
+            setTimeout(() => { btn.innerText = "حفظ (بدون خروج) 💾"; }, 2000);
         }
 
         function loadData() {
-            db.ref('settings/welcomeText').on('value', s => { if(s.val()) document.getElementById('welcome-text').innerText = s.val(); });
             db.ref('messages').on('value', s => {
                 const l = document.getElementById('messages-list'); l.innerHTML = "";
                 if(s.val()) Object.values(s.val()).reverse().forEach(m => {
-                    l.innerHTML += `<div style="background:rgba(255,255,255,0.2); padding:12px; border-radius:15px; margin:8px 0; border-right:5px solid var(--valentine-red); text-align:right;">${m.text}</div>`;
+                    l.innerHTML += `<div style="background:rgba(255,255,255,0.2); padding:10px; border-radius:15px; margin:5px 0;">${m.text}</div>`;
                 });
             });
             db.ref('photos').on('value', s => {
                 const g = document.getElementById('photo-gallery'); g.innerHTML = "";
-                if(s.val()) Object.values(s.val()).forEach(p => { g.innerHTML += `<img src="${p.url}">`; });
+                if(s.val()) Object.values(s.val()).forEach(p => { 
+                    g.innerHTML += `<img src="${p.url}" onclick="openImg('${p.url}')">`; 
+                });
             });
             db.ref('videos').on('value', s => {
                 const v = document.getElementById('video-list'); v.innerHTML = "";
-                if(s.val()) Object.values(s.val()).reverse().forEach(vid => {
+                if(s.val()) Object.values(s.val()).forEach(vid => {
                     let id = vid.url.split('v=')[1] || vid.url.split('/').pop();
-                    v.innerHTML += `<div style="margin:20px auto; border-radius:20px; overflow:hidden; border:3px solid white;"><iframe width="100%" height="300" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe></div>`;
+                    v.innerHTML += `<div style="margin:20px 0; border:2px solid #fff; border-radius:15px; overflow:hidden;"><iframe width="100%" height="250" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe></div>`;
                 });
             });
         }
 
-        // --- ميزة الحذف الجديدة ---
+        function openImg(url) {
+            document.getElementById('light-img').src = url;
+            document.getElementById('lightbox').style.display = "flex";
+        }
+
         function loadAdminDeleteList() {
             const container = document.getElementById('items-to-delete');
-            container.innerHTML = "";
+            container.innerHTML = "<h4>إدارة المحتوى:</h4>";
             ['photos', 'messages', 'videos'].forEach(type => {
                 db.ref(type).once('value', s => {
-                    if(s.val()) {
-                        Object.keys(s.val()).forEach(key => {
-                            const div = document.createElement('div');
-                            div.style.marginBottom = "8px";
-                            div.innerHTML = `<span>${type == 'photos' ? 'صورة' : type == 'messages' ? 'رسالة' : 'فيديو'}</span> 
-                                             <button class="del-item" onclick="deleteItem('${type}', '${key}')">حذف 🗑️</button>`;
-                            container.appendChild(div);
-                        });
-                    }
+                    if(s.val()) Object.keys(s.val()).forEach(key => {
+                        container.innerHTML += `<button class="del-item" onclick="deleteItem('${type}','${key}')">حذف ${type == 'photos' ? 'صورة' : 'عنصر'}</button>`;
+                    });
                 });
             });
         }
 
-        async function deleteItem(type, key) {
-            if(confirm("هل تريد حذف هذا العنصر نهائياً؟")) {
-                await db.ref(`${type}/${key}`).remove();
-                loadAdminDeleteList();
-                loadData(); // تحديث الموقع فوراً
-            }
+        async function deleteItem(t, k) {
+            if(confirm("حذف؟")) { await db.ref(`${t}/${k}`).remove(); loadAdminDeleteList(); }
         }
 
         function startTimer() {
