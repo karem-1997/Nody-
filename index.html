@@ -10,27 +10,37 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700&family=Amiri:wght@700&display=swap');
         :root { --pink: #ff69b4; --dark-red: #800e13; --gold: #ffd700; }
-        body { margin: 0; background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%); font-family: 'Cairo', sans-serif; color: var(--dark-red); text-align: center; min-height: 100vh; }
+        body { margin: 0; background: #fff0f3; font-family: 'Cairo', sans-serif; color: var(--dark-red); text-align: center; }
 
         /* بوابة الدخول */
         #gate { height: 100vh; background: #000; color: var(--gold); display: flex; flex-direction: column; justify-content: center; align-items: center; position: fixed; width: 100%; z-index: 2000; transition: 1s; }
-        .gate-title { font-family: 'Amiri', serif; font-size: 4rem; margin-bottom: 20px; text-shadow: 2px 2px 10px var(--gold); }
-        input[type="text"] { padding: 15px; border: 2px solid var(--gold); background: transparent; color: white; border-radius: 30px; text-align: center; width: 250px; font-size: 1.2rem; outline: none; }
-
+        .gate-title { font-family: 'Amiri', serif; font-size: 4rem; margin-bottom: 20px; }
+        
         /* المحتوى */
-        #content { display: none; padding: 20px; opacity: 0; transition: 2s; }
-        .hero-title { font-family: 'Amiri', serif; font-size: 3.5rem; color: var(--dark-red); margin: 30px 0; }
-        #timer { font-size: 1.5rem; font-weight: bold; margin-bottom: 30px; background: white; display: inline-block; padding: 10px 20px; border-radius: 50px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        #content { display: none; padding: 20px; opacity: 0; transition: 1s; }
+        .hero-title { font-family: 'Amiri', serif; font-size: 3rem; margin: 20px 0; }
+        
+        /* قسم الرسائل */
+        .msg-section { background: white; padding: 20px; border-radius: 15px; max-width: 800px; margin: 20px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .msg-card { border-right: 5px solid var(--pink); padding: 10px; margin: 10px 0; text-align: right; background: #fff9fa; border-radius: 5px; }
 
-        .video-box { max-width: 850px; margin: 20px auto; border: 8px solid white; border-radius: 20px; overflow: hidden; box-shadow: 0 15px 40px rgba(0,0,0,0.2); }
-        .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 20px; }
-        .gallery img { width: 100%; height: 350px; object-fit: cover; border-radius: 15px; border: 5px solid white; transition: 0.3s; }
-        .gallery img:hover { transform: scale(1.02); }
+        /* معرض الصور (2 في الصف) */
+        .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; max-width: 900px; margin: auto; }
+        .gallery img { width: 100%; height: 200px; object-fit: cover; border-radius: 10px; border: 3px solid white; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+        /* Fullscreen View (Lightbox) */
+        #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; justify-content: center; align-items: center; }
+        #lightbox img { max-width: 95%; max-height: 85%; border-radius: 10px; }
+        #close-light { position: absolute; top: 20px; right: 20px; color: white; font-size: 40px; cursor: pointer; font-weight: bold; }
+
+        /* الفيديوهات */
+        .v-list { max-width: 850px; margin: 20px auto; }
+        .v-item { border: 5px solid white; border-radius: 15px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); background: #000; }
 
         /* لوحة التحكم */
-        #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 20px; box-shadow: 0 0 100px rgba(0,0,0,0.5); z-index: 3000; width: 320px; border: 3px solid var(--pink); }
-        .adm-btn { width: 100%; padding: 12px; margin-top: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; background: var(--pink); color: white; }
-        .del-btn { color: red; cursor: pointer; border: none; background: none; font-weight: bold; }
+        #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 20px; box-shadow: 0 0 100px rgba(0,0,0,0.5); z-index: 3000; width: 330px; border: 3px solid var(--pink); max-height: 90vh; overflow-y: auto; }
+        .adm-input { width: 90%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; }
+        .adm-btn { width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; background: var(--pink); color: white; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -38,27 +48,51 @@
     <div id="gate">
         <div class="gate-title">NADA</div>
         <input type="text" id="nadaPass" placeholder="تاريخنا السري (27/11)">
-        <button onclick="unlock()" style="margin-top:20px; background:var(--gold); border:none; padding:12px 40px; border-radius:30px; cursor:pointer; font-weight:bold;">دخول يا ملكتي</button>
+        <button onclick="unlock()" style="margin-top:20px; background:var(--gold); border:none; padding:12px 40px; border-radius:30px; cursor:pointer;">دخول</button>
+    </div>
+
+    <div id="lightbox" onclick="this.style.display='none'">
+        <span id="close-light">&times;</span>
+        <img id="light-img" src="">
     </div>
 
     <div id="content">
         <h1 class="hero-title">بحبك يا ندى ❤️</h1>
-        <div id="timer"></div>
-        <div id="video-area" class="video-box"></div>
+        <div id="timer" style="font-weight: bold; margin-bottom: 20px;"></div>
+
+        <div class="msg-section" id="messages-area">
+            <h3>رسائل من قلبي 💌</h3>
+            <div id="messages-list"></div>
+        </div>
+        
+        <h3 style="margin-top: 40px;">ذكرياتنا الجميلة 📸</h3>
         <div class="gallery" id="photo-gallery"></div>
-        <footer style="margin: 50px 0; opacity: 0.6; font-family: 'Amiri'; font-size: 1.5rem;">للأبد معاً ❤️</footer>
+
+        <h3 style="margin-top: 40px;">فيديوهات لنا 🎥</h3>
+        <div class="v-list" id="video-list"></div>
+        
+        <footer style="padding: 50px; opacity: 0.5;">حكايتنا مستمرة.. ❤️</footer>
     </div>
 
-    <div onclick="openAdmin()" style="position:fixed; bottom:15px; right:15px; cursor:pointer; opacity:0.1; font-size: 30px;">❤️</div>
+    <div onclick="openAdmin()" style="position:fixed; bottom:15px; right:15px; cursor:pointer; opacity:0.1; font-size: 30px; z-index: 4000;">❤️</div>
 
     <div id="admin-panel">
-        <h3 style="color: var(--pink);">لوحة الملك 👑</h3>
-        <input type="file" id="fileInp" style="width: 100%; margin-bottom: 10px;" accept="image/*">
-        <input type="text" id="ytInp" placeholder="رابط يوتيوب للتبديل" style="width: 90%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
+        <h3 style="color: var(--pink); margin-top: 0;">لوحة الملك 👑</h3>
+        
+        <label>إضافة صورة:</label>
+        <input type="file" id="fileInp" class="adm-input" accept="image/*">
+        
+        <label>إضافة رسالة حب:</label>
+        <textarea id="msgInp" class="adm-input" placeholder="اكتب رسالتك هنا..."></textarea>
+        
+        <label>إضافة رابط فيديو يوتيوب:</label>
+        <input type="text" id="ytInp" class="adm-input" placeholder="رابط يوتيوب">
+        
         <button onclick="uploadAction()" id="upBtn" class="adm-btn">تحديث الموقع</button>
-        <div id="status" style="font-size: 12px; margin-top: 10px; color: blue;"></div>
+        <div id="status" style="font-size: 11px; margin-top: 5px; color: blue;"></div>
+        
         <hr>
-        <div id="admin-list" style="max-height: 150px; overflow-y: auto; font-size: 12px;"></div>
+        <div id="admin-items" style="font-size: 12px; text-align: right;"></div>
         <button onclick="document.getElementById('admin-panel').style.display='none'" class="adm-btn" style="background:#ccc; color:#333;">إغلاق</button>
     </div>
 
@@ -78,7 +112,7 @@
                 document.getElementById('content').style.display = "block";
                 setTimeout(() => document.getElementById('content').style.opacity = "1", 500);
                 startTimer(); loadData();
-            } else { alert("تاريخنا غلط يا ملكتي!"); }
+            } else { alert("الباسورد غلط!"); }
         }
 
         function openAdmin() {
@@ -90,68 +124,86 @@
 
         async function uploadAction() {
             const file = document.getElementById('fileInp').files[0];
+            const msg = document.getElementById('msgInp').value;
             const yt = document.getElementById('ytInp').value;
             const btn = document.getElementById('upBtn');
             const status = document.getElementById('status');
 
-            if(yt) {
-                await db.ref('settings/video').set(yt);
-                alert("تم تحديث الفيديو!"); return location.reload();
-            }
-
-            if(!file) return alert("اختار صورة!");
-
             btn.disabled = true;
-            status.innerText = "جاري الرفع المجاني...";
+            status.innerText = "جاري التحديث...";
 
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = async function () {
-                try {
-                    const base64Image = reader.result;
-                    await db.ref('photos').push({ url: base64Image, name: file.name });
-                    status.innerText = "تم الرفع بنجاح! ❤️";
-                    document.getElementById('fileInp').value = '';
-                    loadAdminList();
-                } catch (e) { status.innerText = "خطأ في الرفع!"; }
-                btn.disabled = false;
-            };
+            if(yt) await db.ref('videos').push({url: yt});
+            if(msg) await db.ref('messages').push({text: msg});
+
+            if(file) {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = async function() {
+                    await db.ref('photos').push({url: reader.result, name: file.name});
+                    finishUpdate();
+                };
+            } else { finishUpdate(); }
+        }
+
+        function finishUpdate() {
+            document.getElementById('upBtn').disabled = false;
+            document.getElementById('status').innerText = "تم التحديث!";
+            document.getElementById('msgInp').value = "";
+            document.getElementById('ytInp').value = "";
+            loadAdminList();
         }
 
         function loadData() {
-            db.ref('settings/video').on('value', s => {
-                if(s.val()) {
-                    let id = s.val().includes('v=') ? s.val().split('v=')[1].split('&')[0] : s.val().split('/').pop();
-                    document.getElementById('video-area').innerHTML = `<iframe width="100%" height="450" src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1" frameborder="0" allowfullscreen></iframe>`;
-                }
+            // تحميل الرسائل
+            db.ref('messages').on('value', s => {
+                const list = document.getElementById('messages-list'); list.innerHTML = "";
+                if(s.val()) Object.values(s.val()).reverse().forEach(m => {
+                    list.innerHTML += `<div class="msg-card">${m.text}</div>`;
+                });
             });
+            // تحميل الصور
             db.ref('photos').on('value', s => {
                 const g = document.getElementById('photo-gallery'); g.innerHTML = "";
-                if(s.val()) Object.values(s.val()).forEach(p => { g.innerHTML += `<img src="${p.url}">`; });
+                if(s.val()) Object.values(s.val()).forEach(p => {
+                    g.innerHTML += `<img src="${p.url}" onclick="showFull('${p.url}')">`;
+                });
             });
-        }
-
-        function loadAdminList() {
-            const list = document.getElementById('admin-list'); list.innerHTML = "";
-            db.ref('photos').once('value', s => {
-                if(s.val()) Object.keys(s.val()).forEach(k => {
-                    list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:5px; border-bottom:1px solid #eee;">
-                        <span>${s.val()[k].name}</span>
-                        <button onclick="del('${k}')" class="del-btn">حذف 🗑️</button>
-                    </div>`;
+            // تحميل الفيديوهات
+            db.ref('videos').on('value', s => {
+                const v = document.getElementById('video-list'); v.innerHTML = "";
+                if(s.val()) Object.values(s.val()).reverse().forEach(vid => {
+                    let id = vid.url.includes('v=') ? vid.url.split('v=')[1].split('&')[0] : vid.url.split('/').pop();
+                    v.innerHTML += `<div class="v-item"><iframe width="100%" height="300" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe></div>`;
                 });
             });
         }
 
-        async function del(key) {
-            if(confirm("حذف الصورة؟")) { await db.ref('photos/' + key).remove(); loadAdminList(); }
+        function showFull(url) {
+            document.getElementById('light-img').src = url;
+            document.getElementById('lightbox').style.display = "flex";
+        }
+
+        function loadAdminList() {
+            const list = document.getElementById('admin-items'); list.innerHTML = "<b>إدارة العناصر:</b><br>";
+            const types = ['photos', 'messages', 'videos'];
+            types.forEach(t => {
+                db.ref(t).once('value', s => {
+                    if(s.val()) Object.keys(s.val()).forEach(k => {
+                        list.innerHTML += `<div>${t}: <button onclick="del('${t}','${k}')" style="color:red; border:none; background:none; cursor:pointer;">حذف</button></div>`;
+                    });
+                });
+            });
+        }
+
+        async function del(path, key) {
+            if(confirm("حذف؟")) { await db.ref(`${path}/${key}`).remove(); loadAdminList(); }
         }
 
         function startTimer() {
             const start = new Date("November 27, 2022 00:00:00").getTime();
             setInterval(() => {
                 const d = Math.floor((new Date().getTime() - start) / (1000 * 60 * 60 * 24));
-                document.getElementById('timer').innerText = `بقالنا ${d} يوم.. وكل يوم بحبك أكتر ❤️`;
+                document.getElementById('timer').innerText = `بقالنا ${d} يوم سوا ❤️`;
             }, 1000);
         }
     </script>
