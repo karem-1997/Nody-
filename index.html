@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إلى ملكة قلبي ندى ❤️</title>
+    <title>ملكة قلبي ❤️ ندى</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
@@ -12,36 +12,155 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700&family=Amiri:wght@700&display=swap');
         
-        :root { --gold: #d4af37; --red: #800e13; --bg: #fff0f3; }
-        body { margin: 0; background: var(--bg); font-family: 'Cairo', sans-serif; color: var(--red); overflow-x: hidden; }
-
-        /* شاشة البوابة */
-        #gate {
-            height: 100vh; background: #000; color: var(--gold);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            position: fixed; width: 100%; z-index: 2000; transition: 1s ease-in-out;
+        :root {
+            --primary-pink: #ff69b4; /* Hot Pink */
+            --soft-pink: #ffebee; /* Lighter pink background */
+            --heart-red: #e00000;
+            --gold-accent: #ffd700; /* Gold for highlights */
+            --text-dark: #4a001a; /* Darker text for contrast */
+            --bg-gradient: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%); /* Romantic gradient */
         }
-        .gate-title { font-family: 'Amiri', serif; font-size: 3.5rem; margin-bottom: 20px; }
-        input[type="text"] { padding: 15px; border: 1px solid var(--gold); background: transparent; color: white; border-radius: 8px; text-align: center; font-size: 1.2rem; }
+
+        body {
+            margin: 0; padding: 0;
+            background: var(--bg-gradient);
+            font-family: 'Cairo', sans-serif;
+            color: var(--text-dark);
+            overflow-x: hidden;
+            text-align: center;
+            position: relative;
+        }
+
+        /* تأثيرات الخلفية - قلوب متطايرة */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" fill="none"/><path d="M5,0 L6.18,3.63 L10,3.63 L6.91,5.87 L8.09,9.5 L5,7.27 L1.91,9.5 L3.09,5.87 L0,3.63 L3.82,3.63 Z" fill="%23ffcdd2" opacity="0.3"/></svg>'); /* خليه خفيف جدا عشان ميزغللش */
+            opacity: 0.1;
+            z-index: -1;
+            animation: moveHearts 30s infinite linear;
+        }
+        @keyframes moveHearts {
+            from { background-position: 0 0; }
+            to { background-position: 1000px 1000px; }
+        }
+
+        /* شاشة البوابة الرومانسية */
+        #gate {
+            height: 100vh;
+            background: linear-gradient(to bottom right, #e91e63, #ad1457); /* Deep romantic gradient */
+            color: white;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            position: fixed; width: 100%; z-index: 2000;
+            transition: 1.2s ease-in-out;
+        }
+        .gate-title {
+            font-family: 'Amiri', serif;
+            font-size: 4rem; /* أكبر وأفخم */
+            color: var(--gold-accent); /* لون ذهبي */
+            text-shadow: 3px 3px 5px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+        input[type="text"] {
+            padding: 18px; border: 2px solid var(--gold-accent);
+            background: rgba(255,255,255,0.1); /* شفاف عشان يندمج مع الخلفية */
+            color: white; border-radius: 30px; text-align: center;
+            font-size: 1.3rem; width: 280px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            outline: none;
+            transition: 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #fff;
+            box-shadow: 0 0 20px rgba(255,255,255,0.5);
+        }
+        .btn-entry {
+            margin-top: 30px;
+            background: var(--gold-accent); color: var(--text-dark);
+            border: none; padding: 15px 50px; border-radius: 35px;
+            cursor: pointer; font-weight: bold; font-size: 1.4rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: 0.4s;
+        }
+        .btn-entry:hover {
+            background: white; color: var(--heart-red);
+            transform: translateY(-3px) scale(1.05);
+        }
 
         /* المحتوى الرئيسي */
-        #content { display: none; opacity: 0; transition: 2s; padding: 20px; }
-        .hero-title { font-size: 3rem; margin: 40px 0 10px; }
+        #content {
+            display: none; opacity: 0; transition: 2s; padding: 20px;
+            padding-top: 80px; /* عشان العنوان يكون في مكان كويس */
+        }
+        .hero-title {
+            font-size: 4rem; color: var(--heart-red);
+            font-family: 'Amiri', serif;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        #timer {
+            font-size: 1.8rem; color: var(--text-dark);
+            font-weight: bold; margin-bottom: 40px;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
         
-        .video-box { max-width: 850px; margin: 30px auto; border: 8px solid white; border-radius: 20px; overflow: hidden; box-shadow: 0 15px 40px rgba(0,0,0,0.2); background: #000; }
-        
-        .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 20px; }
-        .gallery img { width: 100%; height: 380px; object-fit: cover; border-radius: 15px; border: 6px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: 0.3s; }
+        .video-box {
+            max-width: 900px; margin: 40px auto;
+            border: 10px solid white; border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25); /* ظل أكبر وأفخم */
+            background: #000;
+            position: relative;
+        }
+        .video-box::before { /* Border effect */
+            content: ''; position: absolute; inset: 0;
+            border-radius: 25px;
+            padding: 5px; /* Adjusting padding creates the border */
+            background: linear-gradient(45deg, var(--primary-pink), var(--gold-accent)); /* Gradient border */
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* صور أكبر شويه */
+            gap: 25px; /* مسافات أكبر بين الصور */
+            padding: 40px;
+        }
+        .gallery img {
+            width: 100%; height: 400px; /* طول أكبر للصور */
+            object-fit: cover; border-radius: 20px;
+            border: 8px solid white; /* بوردر أبيض سميك */
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: transform 0.4s ease, border-color 0.4s ease;
+        }
+        .gallery img:hover {
+            transform: scale(1.03) rotate(2deg);
+            border-color: var(--primary-pink); /* بوردر بينك عند الهوفر */
+        }
+
+        footer {
+            margin: 60px 0; padding: 30px;
+            font-family: 'Amiri', serif;
+            font-size: 2rem; color: var(--primary-pink);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
 
         /* لوحة تحكم الملك */
         #admin-panel {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: white; padding: 25px; border-radius: 20px; box-shadow: 0 0 100px rgba(0,0,0,0.6);
-            z-index: 3000; width: 320px; text-align: center; border: 2px solid var(--gold);
+            background: white; padding: 35px; border-radius: 25px; box-shadow: 0 0 120px rgba(0,0,0,0.7);
+            z-index: 3000; width: 350px; text-align: center; border: 3px solid var(--primary-pink);
         }
-        .adm-input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
-        .adm-btn { width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; font-size: 12px; }
+        .adm-title { color: var(--heart-red); font-size: 1.8rem; margin-bottom: 20px; }
+        .adm-input { width: 90%; padding: 12px; margin: 8px 0; border: 1px solid var(--primary-pink); border-radius: 8px; font-size: 1rem; }
+        .adm-btn { width: 100%; padding: 14px; background: var(--primary-pink); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.1rem; margin-top: 15px; transition: 0.3s; }
+        .adm-btn:hover { background: var(--heart-red); transform: translateY(-2px); }
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px dashed #f0f0f0; font-size: 0.95rem; color: #555; }
+        .del-btn { background: none; border: none; color: var(--heart-red); cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .del-btn:hover { color: #ff0000; transform: scale(1.1); }
     </style>
 </head>
 <body>
@@ -49,12 +168,12 @@
     <div id="gate">
         <div class="gate-title">NADA</div>
         <input type="text" id="nadaPass" placeholder="تاريخنا السري (27/11)">
-        <button onclick="unlock()" style="margin-top:20px; background:var(--gold); border:none; padding:12px 40px; border-radius:8px; cursor:pointer; font-weight:bold;">دخول يا ملكتي</button>
+        <button onclick="unlock()" class="btn-entry">دخول يا ملكتي</button>
     </div>
 
     <div id="content">
         <h1 class="hero-title">بحبك يا ندى ❤️</h1>
-        <div id="timer" style="font-size: 1.4rem; margin-bottom: 30px; font-weight: bold;"></div>
+        <div id="timer"></div>
         
         <div id="video-area" class="video-box">
             </div>
@@ -62,24 +181,23 @@
         <div class="gallery" id="photo-gallery">
             </div>
         
-        <footer style="margin: 50px 0; opacity: 0.5;">حكايتنا مستمرة للأبد.. ❤️</footer>
+        <footer>إنتي حكاية عمري كلها.. ❤️</footer>
     </div>
 
-    <div onclick="openAdmin()" style="position:fixed; bottom:15px; right:15px; cursor:pointer; opacity:0.1; font-size: 25px;">❤️</div>
+    <div onclick="openAdmin()" style="position:fixed; bottom:20px; right:20px; cursor:pointer; opacity:0.08; font-size: 30px; z-index: 2500;">💖</div>
 
     <div id="admin-panel">
-        <h3 style="margin:0">لوحة الملك 👑</h3>
-        <p style="font-size: 11px; color: #666;">ارفع صور للسحابة أو ضيف فيديو يوتيوب</p>
-        
-        <input type="file" id="fileInp" class="adm-input">
-        <input type="text" id="ytInp" class="adm-input" placeholder="رابط يوتيوب (اختياري)">
+        <h3 class="adm-title">لوحة الملك 👑</h3>
+        <input type="file" id="fileInp" class="adm-input" accept="image/*">
+        <input type="text" id="ytInp" class="adm-input" placeholder="رابط يوتيوب (لتغيير الفيديو)">
         
         <button onclick="uploadAction()" id="upBtn" class="adm-btn">تحديث الموقع</button>
-        <div id="status" style="font-size: 12px; margin-top: 5px; color: blue;"></div>
+        <div id="status" style="font-size: 13px; margin-top: 10px; color: blue;"></div>
         
-        <hr>
+        <hr style="border-color: #f0f0f0; margin: 20px 0;">
+        <h4 style="color: var(--text-dark); margin-bottom: 10px;">الصور الحالية:</h4>
         <div id="admin-list" style="max-height: 150px; overflow-y: auto;"></div>
-        <button onclick="document.getElementById('admin-panel').style.display='none'" style="background:none; border:none; color:red; margin-top:10px; cursor:pointer;">إغلاق</button>
+        <button onclick="document.getElementById('admin-panel').style.display='none'" class="adm-btn" style="background: #ccc; color: #333;">إغلاق</button>
     </div>
 
     <script>
@@ -98,15 +216,18 @@
         // دخول ندى
         function unlock() {
             if(document.getElementById('nadaPass').value === "27/11") {
-                document.getElementById('gate').style.top = "-100vh";
-                document.getElementById('content').style.display = "block";
-                setTimeout(() => document.getElementById('content').style.opacity = "1", 500);
+                document.getElementById('gate').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('gate').style.display = "none";
+                    document.getElementById('content').style.display = "block";
+                    setTimeout(() => document.getElementById('content').style.opacity = "1", 100);
+                }, 1000); // تأخير عشان انتقال الأوباسيتي يكتمل
                 startTimer();
                 loadContent();
-            } else { alert("الباسورد غلط يا ملكتي!"); }
+            } else { alert("تاريخنا ده أهم حاجة يا ملكتي، ركزي!"); }
         }
 
-        // فتح الإدارة
+        // فتح لوحة الإدارة
         function openAdmin() {
             if(prompt("كلمة سر الإدارة:") === "1997") {
                 document.getElementById('admin-panel').style.display = "block";
@@ -114,43 +235,48 @@
             }
         }
 
-        // الرفع والحذف
+        // الرفع والتحديث (صور للسحابة / فيديو يوتيوب)
         async function uploadAction() {
             const file = document.getElementById('fileInp').files[0];
             const yt = document.getElementById('ytInp').value;
             const btn = document.getElementById('upBtn');
             const status = document.getElementById('status');
 
-            if(yt) {
+            if (yt) { // لو فيه رابط يوتيوب يبقى تحديث للفيديو
                 db.ref('settings/video').set(yt);
-                alert("تم تحديث الفيديو!");
+                status.innerText = "تم تحديث فيديو اليوتيوب!";
                 return location.reload();
             }
 
-            if(!file) return alert("اختار ملف أولاً!");
+            if (!file) return alert("اختار ملف صورة للرفع أولاً!");
 
             btn.disabled = true;
-            status.innerText = "جاري الرفع للسحابة...";
+            status.innerText = "جاري رفع الصورة بجودتها الأصلية...";
             
             try {
-                const ref = storage.ref('nody_photos/' + file.name);
+                const ref = storage.ref('nody_photos/' + file.name); // مسار الصور في السحابة
                 const snap = await ref.put(file);
                 const url = await snap.ref.getDownloadURL();
-                await db.ref('photos').push({ url: url, name: file.name });
-                status.innerText = "تم الرفع بنجاح!";
-                loadAdminList();
+                await db.ref('photos').push({ url: url, name: file.name }); // حفظ في قاعدة البيانات
+                status.innerText = "تم رفع الصورة بنجاح!";
+                document.getElementById('fileInp').value = ''; // مسح الملف بعد الرفع
+                loadAdminList(); // تحديث قائمة الإدارة
             } catch (e) {
-                status.innerText = "خطأ! تأكد من إعدادات الـ Rules";
+                status.innerText = "خطأ في الرفع! تأكد من إعدادات Storage Rules.";
+                console.error("Upload error:", e);
             }
             btn.disabled = false;
         }
 
+        // تحميل المحتوى للموقع
         function loadContent() {
             // تحميل فيديو يوتيوب
             db.ref('settings/video').on('value', s => {
                 if(s.val()) {
                     let id = s.val().includes('v=') ? s.val().split('v=')[1].split('&')[0] : s.val().split('/').pop();
-                    document.getElementById('video-area').innerHTML = `<iframe width="100%" height="450" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe>`;
+                    document.getElementById('video-area').innerHTML = `<iframe width="100%" height="480" src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${id}" frameborder="0" allowfullscreen></iframe>`;
+                } else {
+                    document.getElementById('video-area').innerHTML = '<div style="height:480px; display:flex; align-items:center; justify-content:center; color:white; font-size:2rem;">لا يوجد فيديو حالياً 💔</div>';
                 }
             });
             // تحميل الصور من السحابة
@@ -158,10 +284,13 @@
                 const g = document.getElementById('photo-gallery'); g.innerHTML = "";
                 if(s.val()) {
                     Object.values(s.val()).forEach(p => { g.innerHTML += `<img src="${p.url}">`; });
+                } else {
+                    g.innerHTML = '<p style="font-size:1.2rem; margin-top:50px;">لسه مفيش صور ذكريات هنا.. يا ترى أول صورة هتكون إيه؟ 😊</p>';
                 }
             });
         }
 
+        // تحميل قائمة الصور في لوحة الإدارة
         function loadAdminList() {
             const list = document.getElementById('admin-list'); list.innerHTML = "";
             db.ref('photos').once('value', s => {
@@ -169,29 +298,39 @@
                     Object.keys(s.val()).forEach(k => {
                         const item = s.val()[k];
                         list.innerHTML += `<div class="item-row">
-                            <span style="overflow:hidden; text-overflow:ellipsis;">${item.name}</span>
-                            <button onclick="delItem('${k}', '${item.name}')" style="color:red; border:none; background:none; cursor:pointer;">حذف 🗑️</button>
+                            <span style="overflow:hidden; text-overflow:ellipsis; max-width: 70%;">${item.name}</span>
+                            <button onclick="delItem('${k}', '${item.name}')" class="del-btn">حذف 🗑️</button>
                         </div>`;
                     });
+                } else {
+                    list.innerHTML = '<p style="font-size:11px; color:#999;">لا توجد صور حالياً في السحابة.</p>';
                 }
             });
         }
 
+        // حذف صورة من السحابة وقاعدة البيانات
         async function delItem(key, name) {
-            if(!confirm("حذف الصورة؟")) return;
+            if(!confirm("هل أنت متأكد من حذف هذه الصورة نهائياً؟")) return;
             try {
-                await storage.ref('nody_photos/' + name).delete();
-                await db.ref('photos/' + key).remove();
+                await storage.ref('nody_photos/' + name).delete(); // حذف من السحابة
+                await db.ref('photos/' + key).remove(); // حذف من قاعدة البيانات
+                loadAdminList(); // تحديث القائمة
+            } catch(e) {
+                alert("حدث خطأ أثناء الحذف أو الصورة غير موجودة في السحابة. سيتم حذفها من القائمة فقط.");
+                await db.ref('photos/' + key).remove(); // لو فشل من السحابة، احذف من القاعدة
                 loadAdminList();
-            } catch(e) { await db.ref('photos/' + key).remove(); loadAdminList(); }
+                console.error("Delete error:", e);
+            }
         }
 
+        // عداد الوقت
         function startTimer() {
-            const start = new Date("November 27, 2022 00:00:00").getTime();
+            const startDate = new Date("November 27, 2022 00:00:00").getTime(); // تاريخ بدايتكم
             setInterval(() => {
-                const diff = new Date().getTime() - start;
+                const now = new Date().getTime();
+                const diff = now - startDate;
                 const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-                document.getElementById('timer').innerText = `بقالنا مع بعض ${d} يوم.. وكل يوم أحلى من اللي قبله ❤️`;
+                document.getElementById('timer').innerText = `بقالنا ${d} يوم.. وكل يوم أحلى من اللي قبله ❤️`;
             }, 1000);
         }
     </script>
